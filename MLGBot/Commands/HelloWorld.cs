@@ -14,5 +14,17 @@ namespace MLGBot.Commands
         {
             await Context.Channel.SendMessageAsync("Eat my dick and balls, this is Jared's MLG discord app.");
         }
+
+        [Command("embed"), Summary("embed command")]
+        public async Task Embed([Remainder]string Input = "None")
+        {
+            var embed = new EmbedBuilder();
+            embed.WithAuthor("MLGBot", Context.User.GetAvatarUrl());
+            embed.WithColor(40, 200, 150);
+            embed.WithFooter("The bottom of the embed", Context.Guild.Owner.GetAvatarUrl());
+            embed.WithDescription("This is a **dummy** description, with a cool link.\n" + "[My Favorte website](https://www.google.com)");
+            embed.AddField("User input:", Input);
+            await Context.Channel.SendMessageAsync("", false, embed.Build());
+        }
     }
 }
