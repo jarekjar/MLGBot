@@ -7,6 +7,7 @@ using Discord.WebSocket;
 using Discord.Commands;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
+using MLGBot.Services;
 
 namespace MLGBot
 {
@@ -15,14 +16,28 @@ namespace MLGBot
         private DiscordSocketClient Client;
         private CommandService Commands;
         private IConfigurationRoot config;
+        private ServiceProvider serviceProvider;
 
         static void Main(string[] args)
         {
-            new Program().MainAsync().GetAwaiter().GetResult();
+            try
+            {
+                new Program().MainAsync().GetAwaiter().GetResult();
+            }
+            catch(Exception ex)
+            {
+                Console.WriteLine("Error:" + ex.Message);
+                Console.ReadLine();
+            }
         }
 
         private async Task MainAsync()
         {
+
+            serviceProvider = new ServiceCollection()
+                .AddSingleton<AudioService>()
+                .BuildServiceProvider();
+
             //grab config
             var builder = new ConfigurationBuilder()
              .SetBasePath(Directory.GetCurrentDirectory())
@@ -47,7 +62,7 @@ namespace MLGBot
 
             Client.MessageReceived += Client_MessageReceived;
 
-            await Commands.AddModulesAsync(Assembly.GetEntryAssembly(), services: null);
+            await Commands.AddModulesAsync(Assembly.GetEntryAssembly(), services: serviceProvider);
 
             Client.Ready += Client_Ready;
 
@@ -84,7 +99,7 @@ namespace MLGBot
 
             if (!(Message.HasCharPrefix('$', ref pos) || Message.HasMentionPrefix(Client.CurrentUser, ref pos))) return;
 
-            var Result = await Commands.ExecuteAsync(Context, pos, services: null);
+            var Result = await Commands.ExecuteAsync(Context, pos, services: serviceProvider);
 
             if (!Result.IsSuccess)
                 Console.WriteLine($"{DateTime.Now} at Commands Something went wrong with executing a command. Text: {Context.Message.Content} | Error: {Result.ErrorReason}");
