@@ -15,6 +15,12 @@ namespace MLGBot.Commands
             await Context.Channel.SendMessageAsync("Eat my dick and balls, this is Jared's MLG discord app.");
         }
 
+        [Command("panda"), Alias("kip"), Summary("Hello world command")]
+        public async Task Panda()
+        {
+            await Context.Channel.SendMessageAsync("Panda? more like super mega furry.");
+        }
+
         [Command("embed"), Summary("embed command")]
         public async Task Embed([Remainder]string Input = "None")
         {
