@@ -56,23 +56,24 @@ namespace MLGBot.Mod
             {
                 return;
             }
+            
 
             try
             {
                 var audioClient = await target.ConnectAsync();
+                if (ConnectedChannels.TryAdd(guild.Id, audioClient))
+                {
+                //    // If you add a method to log happenings from this service,
+                //    // you can uncomment these commented lines to make use of that.
+                //    //await Message(LogSeverity.Info, $"Connected to voice on {guild.Name}.");
+                }
             }
+
             catch (Exception ex)
             {
                 Console.WriteLine("Could not connect to chat: " + ex.Message);
             }
-
-            //if (ConnectedChannels.TryAdd(guild.Id, audioClient))
-            //{
-            //    // If you add a method to log happenings from this service,
-            //    // you can uncomment these commented lines to make use of that.
-            //    //await Message(LogSeverity.Info, $"Connected to voice on {guild.Name}.");
-            //}
-        }
+}
 
         public async Task LeaveAudio(IGuild guild)
         {
@@ -80,7 +81,7 @@ namespace MLGBot.Mod
             if (ConnectedChannels.TryRemove(guild.Id, out client))
             {
                 await client.StopAsync();
-                //await Log(LogSeverity.Info, $"Disconnected from voice on {guild.Name}.");
+                Console.WriteLine($"Disconnected from voice on {guild.Name}.");
             }
         }
 
@@ -95,7 +96,7 @@ namespace MLGBot.Mod
             IAudioClient client;
             if (ConnectedChannels.TryGetValue(guild.Id, out client))
             {
-                //await Log(LogSeverity.Debug, $"Starting playback of {path} in {guild.Name}");
+                Console.WriteLine($"Starting playback of {path} in {guild.Name}");
                 using (var ffmpeg = CreateProcess(path))
                 using (var stream = client.CreatePCMStream(AudioApplication.Music))
                 {
