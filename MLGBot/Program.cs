@@ -6,16 +6,20 @@ using Discord;
 using Discord.WebSocket;
 using Discord.Commands;
 using Microsoft.Extensions.Configuration;
+using Microsoft.Extensions.DependencyInjection;
 
 namespace MLGBot
 {
-    class Program
+    public class Program
     {
         private DiscordSocketClient Client;
         private CommandService Commands;
+        private IConfigurationRoot config;
 
         static void Main(string[] args)
-        => new Program().MainAsync().GetAwaiter().GetResult();
+        {
+            new Program().MainAsync().GetAwaiter().GetResult();
+        }
 
         private async Task MainAsync()
         {
@@ -24,7 +28,7 @@ namespace MLGBot
              .SetBasePath(Directory.GetCurrentDirectory())
              .AddJsonFile("config.json");
 
-            var configuration = builder.Build();
+            config = builder.Build();
 
             //discord client
             Client = new DiscordSocketClient(new DiscordSocketConfig
@@ -49,7 +53,7 @@ namespace MLGBot
 
             Client.Log += Client_Log;
 
-            string Token = configuration["SECRET"];
+            string Token = config["SECRET"];
 
             await Client.LoginAsync(TokenType.Bot, Token);
             await Client.StartAsync();
@@ -59,7 +63,7 @@ namespace MLGBot
 
         private async Task Client_Ready()
         {
-            await Client.SetGameAsync("jared be hot.", "", ActivityType.Watching);
+            await Client.SetGameAsync(config["STATUS"], "", ActivityType.Watching);
         }
 
         private async Task Client_Log(LogMessage msg)
