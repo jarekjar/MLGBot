@@ -39,6 +39,18 @@ namespace MLGBot.Commands
                 return;
             }
 
+            //find an empty voice channel
+            var emptyChannel = Context.Guild.VoiceChannels.Where(x => x.Users.Count == 0).FirstOrDefault();
+            if(emptyChannel == null)
+            {
+                await Context.Channel.SendMessageAsync("There are no empty channels. Sowwy.");
+                return;
+            }
+
+            //move user first
+            await currentUser.ModifyAsync(x => x.Channel = emptyChannel);
+            counter++;
+
             //get list of all ACTIVE users in discord
             var users = Context.Guild.Users.Where(x => x.Activity != null && x.Activity.Type == ActivityType.Playing);
 
@@ -46,12 +58,12 @@ namespace MLGBot.Commands
             foreach (var user in users)
             {
                 //if game names match, move to server
-                if (user.Activity.Name == currentGame && user != currentUser)
+                if (user.VoiceChannel != null && user.Activity.Name == currentGame && user != currentUser)
                 {
                     //increase the moved user counter
                     counter++;
                     //move user to current voice channel
-                    await user.ModifyAsync(x => x.Channel = currentChannel);
+                    await user.ModifyAsync(x => x.Channel = emptyChannel);
                 }
             }
 
@@ -63,7 +75,7 @@ namespace MLGBot.Commands
             }
 
             //return success message
-            await Context.Channel.SendMessageAsync($"Moved {counter} users to voice channel {currentChannel.Name}. Enjoy playing {currentGame}!");
+            await Context.Channel.SendMessageAsync($"Moved {counter} user(s) to voice channel {emptyChannel.Name}. Enjoy playing {currentGame}!");
             return;
         }
     }
