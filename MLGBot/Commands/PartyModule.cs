@@ -22,8 +22,7 @@ namespace MLGBot.Commands
                 await Context.Channel.SendMessageAsync("You are not currently playing a game, or your game is not connected to discord.");
                 return;
             }
-
-
+            
             //set current game to command user's game
             var currentGame = Context.User.Activity.Name;
 
@@ -56,12 +55,14 @@ namespace MLGBot.Commands
                 }
             }
 
+            //if no users were switched over, return message
             if (counter == 0)
             {
                 await Context.Channel.SendMessageAsync($"You are all alone playing this game. Loser.");
                 return;
             }
 
+            //return success message
             await Context.Channel.SendMessageAsync($"Moved {counter} users to voice channel {currentChannel.Name}. Enjoy playing {currentGame}!");
             return;
         }
