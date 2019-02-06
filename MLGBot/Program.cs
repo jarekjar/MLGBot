@@ -33,7 +33,7 @@ namespace MLGBot
 
         private async Task MainAsync()
         {
-
+            //set up dependency injection
             serviceProvider = new ServiceCollection()
                 .AddSingleton<AudioService>()
                 .BuildServiceProvider();
@@ -83,7 +83,7 @@ namespace MLGBot
 
         private async Task Client_Log(LogMessage msg)
         {
-            Console.WriteLine($"{DateTime.Now} at {msg.Source} {msg.Message}");
+            await Task.Run(() => Console.WriteLine($"{DateTime.Now} at {msg.Source} {msg.Message}"));
         }
         
         private async Task Client_MessageReceived(SocketMessage msg)
