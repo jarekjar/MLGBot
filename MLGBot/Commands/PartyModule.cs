@@ -50,7 +50,6 @@ namespace MLGBot.Commands
                 {
                     //increase the moved user counter
                     counter++;
-
                     //move user to current voice channel
                     await user.ModifyAsync(x => x.Channel = currentChannel);
                 }
