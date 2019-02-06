@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 using Discord;
@@ -37,21 +38,18 @@ namespace MLGBot.Commands
                 return;
             }
 
-            //get list of all users in discord
-            var users = Context.Guild.Users;
+            //get list of all ACTIVE users in discord
+            var users = Context.Guild.Users.Where(x => x.Activity != null && x.Activity.Type == ActivityType.Playing);
 
             //loop through all users
             foreach (var user in users)
             {
-                //single out only the ones who are "playing"
-                if (user.Activity != null && user.Activity.Type == ActivityType.Playing)
+                //if game names match, move to server
+                if (user.Activity.Name == currentGame && user != currentUser)
                 {
-                    //if game names match, move to server
-                    if (user.Activity.Name == currentGame && user != currentUser)
-                    {
-                        counter++;
-                        await user.ModifyAsync(x => x.Channel = currentChannel);
-                    }
+                    //increase the moved player counter
+                    counter++;
+                    await user.ModifyAsync(x => x.Channel = currentChannel);
                 }
             }
 
