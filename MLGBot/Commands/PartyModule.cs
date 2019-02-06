@@ -15,6 +15,7 @@ namespace MLGBot.Commands
         [Command("party"), Alias("Party"), Summary("Move players playing same game to same voice channel.")]
         public async Task Party()
         {
+            //move user counter
             var counter = 0;
 
             //if user is not playing a game, return message
@@ -47,8 +48,10 @@ namespace MLGBot.Commands
                 //if game names match, move to server
                 if (user.Activity.Name == currentGame && user != currentUser)
                 {
-                    //increase the moved player counter
+                    //increase the moved user counter
                     counter++;
+
+                    //move user to current voice channel
                     await user.ModifyAsync(x => x.Channel = currentChannel);
                 }
             }
